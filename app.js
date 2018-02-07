@@ -33,11 +33,34 @@ function createPain(parent){
 
   //
   for(let name in controls)
-  //controls[name] will be a function and cx its argument
+  //controls[name] will be a function and cx its argument --> Each control has access to the canvas context
     toolbar.appendChild(controls[name](cx))
 
     //panel is div that will hold the canvas
     let panel = elt("div", {class: "picturepanel"}, canvas)
     //attach panel(canvas) and toolbar inside a div to the parent Node
     parent.appendChild(elt("div", null, panel, toolbar))
+}
+
+//Tools
+//object that will store the different tools
+let tools = Object.create(null)
+
+//select that allows user to pick drawing tool
+controls.tool = function(cx){
+  let select = elt("select")
+  //append options for tools
+  for (let name in tools)
+    select.appendChild(elt("option",null,name))
+
+  //add event listener to events
+  cx.canvas.addEventListener("mousedown", (event)=>{
+    if (event.which == 1){
+      //call the tool function we require
+      tools[select.value](event,cx)
+      //prevent default to avoid holding the mouse down has other unwanted effects
+      event.preventDefault()
+    }
+  })
+    return elt("span", null,"Tool: ", select)
 }
